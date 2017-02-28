@@ -13,6 +13,7 @@ html
 body
 {
 	height: 96%;
+	background-color: gray;
 	background: linear-gradient(90deg,
 								#7b7e89,
 								#36383f);
