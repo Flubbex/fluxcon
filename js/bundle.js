@@ -127,13 +127,17 @@ JSConsole.prototype.log = function out()
 								new Module("text"),
 								new Module("submit"));
 								
-	jsc.submit.on("click",this.parseInput);
+	jsc.submit.on("click",function(){
+		jsc.parseInput
+	}));
 	jsc.input.on("keydown",function(e){
 		if (e.keyCode===13)
 			jsc.parseInput()
 	});	
 
-	window.addEventListener('error',function(e){jsc.log(e)});
+	window.addEventListener('error',function(e){
+		jsc.log(e)
+	});
 
 	jsc.log("JSConsole (",config.version,") running");
 })();
