@@ -1,7 +1,7 @@
 config = {};
 config.version = '0.1.4';
 
-Object.toJSON = function(prop)
+Object.dump = function(prop)
 {
 	var seen = [];
 	return JSON.stringify(prop,function(key, val) 
