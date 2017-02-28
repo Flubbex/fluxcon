@@ -1,5 +1,5 @@
 config = {};
-config.version = '0.1.0';
+config.version = '0.1.1';
 
 Object.dump = function(prop)
 {
@@ -128,11 +128,11 @@ JSConsole.prototype.log = function out()
 								new Module("submit"));
 								
 	jsc.submit.on("click",function(){
-		jsc.parseInput
+		jsc.parseInput();
 	}));
 	jsc.input.on("keydown",function(e){
 		if (e.keyCode===13)
-			jsc.parseInput()
+			jsc.parseInput();
 	});	
 
 	window.addEventListener('error',function(e){
