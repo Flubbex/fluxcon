@@ -1,20 +1,33 @@
 function ObjDump(obj)
 {
-	return function walk(obj)
+	var history = {};
+	var result	= "";
+	function walk(obj)
 	{
-		var result = "";
+		var result = {};
 		
 		for (var attr in obj)
 		{
 			var prop = obj[attr];
 			if (typeof(prop)==="object")
-				result[attr] = walk(prop);
+				{
+					//detect endless loops
+					if (!history[prop])
+					{
+							result[attr] = walk(prop);
+							history[prop] = true;
+					}
+					else
+						result[attr] = "[Loopback]";
+				}
 			else
 				result[attr] = prop
 		}
-		
 		return result;
-	}(obj);
+	};
+	var data = walk(obj);
+	console.log(data)
+
 }
 
 function module(domid)
@@ -63,6 +76,6 @@ var jsconsole = function(jsconsole,input)
 	
 	out("JSConsole running");
 	
-	input.on("click",out);
+	input.on("keydown",out);
 		
 }(new module("console"),new module("input"));
