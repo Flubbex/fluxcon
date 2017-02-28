@@ -23,7 +23,7 @@ body
 {
 	background-color: rgba(255,255,255,0.4);
 	width: 90%;
-	height: 80%;
+	height: 75%;
 	margin-left: 4.75%;
 	margin-top: 2%;
 	overflow-y: scroll;
@@ -40,10 +40,12 @@ body
 	background-color: rgba(0,0,0,0.4);
 	padding: 0.25%;
 	margin-right: 2.5%;
+	width: 5%;
 }
 
 #console div span:nth-child(2)
 {
+	width: 90%;
 }
 
 #input
@@ -52,20 +54,31 @@ body
 	width: 90%;
 	margin-left: 4.75%;
 	margin-top: 1%;
+	height: 10%;
+}
+
+#input > *
+{
+	float: left;
+	background-color: rgba(0,0,0,0.4);
+	border: none;
+	color: white;
+	padding: 0.25%;
+	margin: 0.5%;
+	height: 75%;
+	font-size: 1.1em;
 }
 
 #input input:nth-child(1)
 {
-	background: none;
-	border: none;
-	color: white;
-	padding: 0.25%;
 	padding-left: 1.5%;
-	font-size: 1.1em;
+	width: 75%;
 }
 #input input:nth-child(2)
 {
-	float: left;
+	float: right;
+	width: 20%;
+	height: 82%;
 }
 #footer
 {
@@ -74,4 +87,5 @@ body
 	text-align: center;
 	padding-top: 1%;
 	margin-top: 1%;
+	height: 10%;
 }
