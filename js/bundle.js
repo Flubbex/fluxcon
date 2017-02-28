@@ -14,7 +14,22 @@ module.prototype.write = function()
 	{
 		var prop = args[i]
 		var newspan = document.createElement("span");
-		newspan.innerHTML = typeof(prop)==='object' ? JSON.stringify(prop) : prop
+		newspan.innerHTML = typeof(prop)==='object' ? 
+								function(prop){
+									seen = [];
+									return JSON.stringify(prop,function(key, val) 
+											{
+											   if (val != null && typeof val == "object") 
+											   {
+													if (seen.indexOf(val) >= 0) 
+													{
+														return;
+													}
+													seen.push(val);
+												}
+												return val;
+											});
+									}(prop) : prop
 		newelm.appendChild(newspan);
 	}
 	this.elm.appendChild(newelm);
@@ -28,10 +43,13 @@ module.prototype.on	=	function(event,callback)
 {
 	return this.elm.addEventListener(event,callback);
 }
+module.prototype.clear	= function()
+{
+	this.elm.value = "";
+}
 
 
-
-var MIJNCODE = function(jsconsole,input,submit)
+var JSConsole = function(jsconsole,input,submit)
 {
 	function out()
 	{
@@ -52,7 +70,8 @@ var MIJNCODE = function(jsconsole,input,submit)
 	
 	submit.on("click",function()
 	{
-		out(input.read("value"));
+		out( eval(input.read("value")) );
+		input.clear();
 	});
 		
 }(new module("console"),new module("text"),new module("submit"));
