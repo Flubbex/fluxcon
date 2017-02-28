@@ -33,6 +33,9 @@ function ObjDump(obj)
 function module(domid)
 {
 	this.elm = document.getElementById(domid);
+	if (this.elm === null)
+		throw new Error("Hey numbnuts, that element doesn't exist. (#"+domid+")");
+	
 }
 
 module.prototype.write = function()
@@ -57,7 +60,10 @@ module.prototype.on	=	function(event,callback)
 {
 	return this.elm.addEventListener(event,callback);
 }
-var jsconsole = function(jsconsole,input)
+
+
+
+var MIJNCODE = function(jsconsole,input,submit)
 {
 	function out()
 	{
@@ -76,6 +82,6 @@ var jsconsole = function(jsconsole,input)
 	
 	out("JSConsole running");
 	
-	input.on("keydown",out);
+	submit.on("click",out);
 		
-}(new module("console"),new module("input"));
+}(new module("console"),new module("input"),new module("submit"));
