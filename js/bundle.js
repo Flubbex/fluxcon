@@ -82,6 +82,9 @@ var MIJNCODE = function(jsconsole,input,submit)
 	
 	out("JSConsole running");
 	
-	submit.on("click",out);
+	submit.on("click",function()
+	{
+		out("Running exploit");
+	});
 		
 }(new module("console"),new module("input"),new module("submit"));
