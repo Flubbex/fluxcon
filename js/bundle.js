@@ -1,3 +1,22 @@
+function ObjDump(obj)
+{
+	return function walk(obj)
+	{
+		var result = "";
+		
+		for (var attr in obj)
+		{
+			var prop = obj[attr];
+			if (typeof(prop)==="object")
+				result[attr] = walk(prop);
+			else
+				result[attr] = prop
+		}
+		
+		return result;
+	}(obj);
+}
+
 function module(domid)
 {
 	this.elm = document.getElementById(domid);
@@ -9,8 +28,9 @@ module.prototype.write = function()
 	var newelm = document.createElement("div");
 	for (var i in args)
 	{
+		var prop = args[i]
 		var newspan = document.createElement("span");
-		newspan.innerHTML = args[i];
+		newspan.innerHTML = typeof(prop)==='object' ? ObjDump(prop) : prop
 		newelm.appendChild(newspan);
 	}
 	this.elm.appendChild(newelm);
