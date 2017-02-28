@@ -1,5 +1,5 @@
 config = {};
-config.version = '0.1.1';
+config.version = '0.1.2';
 
 Object.dump = function(prop)
 {
@@ -129,7 +129,7 @@ JSConsole.prototype.log = function out()
 								
 	jsc.submit.on("click",function(){
 		jsc.parseInput();
-	}));
+	});
 	jsc.input.on("keydown",function(e){
 		if (e.keyCode===13)
 			jsc.parseInput();
