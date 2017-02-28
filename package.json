@@ -1,0 +1,24 @@
+{
+  "name": "jsconsole",
+  "version": "1.0.0",
+  "description": "jsconsole",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Flubbex/jsconsole.git"
+  },
+  "keywords": [
+    "js",
+    "console",
+    "3ds"
+  ],
+  "author": "Flubbex",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Flubbex/jsconsole/issues"
+  },
+  "homepage": "https://github.com/Flubbex/jsconsole#readme"
+}
