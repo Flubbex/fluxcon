@@ -119,7 +119,13 @@ function JSConsole(jsconsole,input,submit)
 	
 	this.history.save = function()
 	{
-		return btoa(JSON.stringify(this))
+		var historyb64 	= btoa("this.history.load('"+btoa(JSON.stringify(this))+"')");
+		var url 		= location.toString();
+		
+		if (!url.endsWith("#"))
+			url += "#";
+			
+		return "<a href='"+url+historyb64+"'>"+historyb64+"</a>"
 	}
 	
 	this.history.load = function(basestring)
@@ -151,8 +157,8 @@ JSConsole.prototype.parseInput = function parseInput(override)
 	var userinput = override || this.input.read("value");
 	var result = this.parse ( userinput );
 	
-	this.log ( userinput );
-				
+	this.log ( userinput ).style.color = "blue";
+	
 	this.log( result );
 	
 	this.input.clear();
@@ -181,11 +187,11 @@ JSConsole.prototype.log = function out()
 {
 	
 	var args = [].slice.call(arguments);
-	var timestamp = this.timestamp();
+	args.unshift(this.timestamp());
 	
-	args.unshift(timestamp);
-	this.console.write.apply(this.console,
-						args).scrollIntoView();
+	var elm = this.console.write.apply(this.console,args);
+	elm.scrollIntoView();
+	return elm;
 };
 (function initialise(){
 	
@@ -216,9 +222,20 @@ JSConsole.prototype.log = function out()
 
 	jsc.log("JSConsole (",config.version,") running");
 	function processHash() {
-	  const hash = location.hash;
+	  const hash = location.hash.slice(1);
 	  if (hash)
-		jsc.log( jsc.parseInput(hash.slice(1)) );
+		{
+			try //to load as base64
+			{
+				jsc.parseInput ( atob( hash ) );
+			}
+			catch (e)
+			{
+				jsc.parseInput(hash)
+			}
+			
+			location.hash = "";
+		}
 	}
 
 	window.addEventListener('hashchange', processHash);
