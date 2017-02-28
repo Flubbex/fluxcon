@@ -1,5 +1,5 @@
 config = {};
-config.version = '0.1.4';
+config.version = '0.1.5';
 
 Object.dump = function(prop)
 {
@@ -92,6 +92,23 @@ function JSConsole(jsconsole,input,submit)
 	this.history		= [];
 	this.history.key	= 0;
 	
+	this.ajax = {};
+	this.ajax.get = function(address)
+	{
+		var req = new XMLHttpRequest();
+		req.open("GET", address);
+		//oReq.overrideMimeType("text/plain");
+		req.send();
+		
+		return{
+			then:function(callback,parent){
+					req.addEventListener("load", function(){
+						callback.apply(parent||this,arguments);
+					});
+			}
+		}
+	}
+	
 	this.history.toString = function(title)
 	{
 		console.log(this.length)
@@ -116,6 +133,8 @@ function JSConsole(jsconsole,input,submit)
 		for (var i in this)
 			this.pop(i)
 	}
+	
+	//http://tinyurl.com/create.php?source=indexpage&url=http://www.google.com&submit=Make+TinyURL!&alias=
 	
 	this.history.save = function()
 	{
@@ -212,13 +231,13 @@ JSConsole.prototype.log = function out()
 		//	console.log(e.keyCode)
 	});	
 
-	window.addEventListener('error',function(e){
-		jsc.log(e);
-	});
-	
-	window.error = function(e){
+	function printError(e){
 		jsc.log(e);
 	};
+	window.addEventListener('error',printError);
+	window.error = printError;
+	document.body.error = printError;
+	document.error = printError;
 
 	jsc.log("JSConsole (",config.version,") running");
 	function processHash() {
