@@ -1,35 +1,3 @@
-function ObjDump(obj)
-{
-	var history = {};
-	var result	= "";
-	function walk(obj)
-	{
-		var result = {};
-		
-		for (var attr in obj)
-		{
-			var prop = obj[attr];
-			if (typeof(prop)==="object")
-				{
-					//detect endless loops
-					if (!history[prop])
-					{
-							result[attr] = walk(prop);
-							history[prop] = true;
-					}
-					else
-						result[attr] = "[Loopback]";
-				}
-			else
-				result[attr] = prop
-		}
-		return result;
-	};
-	var data = walk(obj);
-	console.log(data)
-
-}
-
 function module(domid)
 {
 	this.elm = document.getElementById(domid);
@@ -46,15 +14,15 @@ module.prototype.write = function()
 	{
 		var prop = args[i]
 		var newspan = document.createElement("span");
-		newspan.innerHTML = typeof(prop)==='object' ? ObjDump(prop) : prop
+		newspan.innerHTML = typeof(prop)==='object' ? JSON.stringify(prop) : prop
 		newelm.appendChild(newspan);
 	}
 	this.elm.appendChild(newelm);
 	return newelm;
 };
-module.prototype.read = function()
+module.prototype.read = function(attr)
 {
-	return this.elm.innerHTML;
+	return this.elm[attr];
 }
 module.prototype.on	=	function(event,callback)
 {
@@ -84,7 +52,7 @@ var MIJNCODE = function(jsconsole,input,submit)
 	
 	submit.on("click",function()
 	{
-		out("Running exploit");
+		out(input.read("value"));
 	});
 		
-}(new module("console"),new module("input"),new module("submit"));
+}(new module("console"),new module("text"),new module("submit"));
