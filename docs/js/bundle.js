@@ -1,5 +1,5 @@
 config = {};
-config.version = '0.1.5';
+config.version = '0.1.6';
 
 Object.dump = function(prop)
 {
@@ -147,6 +147,16 @@ function JSConsole(jsconsole,input,submit)
 		return "<a href='"+url+historyb64+"'>"+historyb64+"</a>"
 	}
 	
+	var self = this;
+	this.history.exec = function()
+	{
+		for (var i=0;i<this.length-1;i++)
+		{
+			console.log(i,this[i])
+			self.parseInput(this[i].command)
+		}
+	}
+	
 	this.history.load = function(basestring)
 	{
 		if (!basestring)
@@ -156,6 +166,9 @@ function JSConsole(jsconsole,input,submit)
 		this.clear();
 		for (var attr in data)
 			this[attr] = data[attr]
+		
+		this.exec();
+		
 		return this.toString("Loaded history");
 	}
 }
