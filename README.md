@@ -29,5 +29,6 @@ A javascript console.
 * Code is now properly organized and MVC-compliant.
 * All beta-functions removed (Or at least, unsupported for now)
 * Basic console functionality works (write things, run them) 
+
 ### 0.1.0 - 0.1.7
 * Initial testing versions. 
