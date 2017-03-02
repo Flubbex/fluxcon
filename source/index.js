@@ -33,7 +33,7 @@ window.addEventListener("load",
 
 		window.addEventListener('hashchange', processHash);
 		processHash();
-		flx.log("Fluxcon (",Config.version,") running");
+		flx.log("Fluxcon ",Config.version," (",Config.vername,") running");
 		flx.focusEditor();
 	}
 );

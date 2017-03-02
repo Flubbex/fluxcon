@@ -104,8 +104,8 @@ module.exports = View;
 
 },{"emitonoff":1}],3:[function(require,module,exports){
 Config = {};
-Config.version = '0.1.9f';
-
+Config.version = '0.2.1';
+Config.vername = "Sunny Taco";
 
 module.exports = Config;
 
@@ -166,22 +166,22 @@ History.toString = function(title)
 	return result;
 };
 
-History.push = function(dataset)
+History.prototype.push = function(dataset)
 {
 	return this.content.push(dataset);
 };
 
-History.get = function(index)
+History.prototype.get = function(index)
 {
 	return this.content[index];
 };
 
-History.clear = function()
+History.prototype.clear = function()
 {
 	this.content = [];
 };
 
-History.save = function()
+History.prototype.save = function()
 {
 	var historyb64 	= btoa("History.load('"+btoa(JSON.stringify(this))+"')");
 	var url 		= location.toString();
@@ -192,7 +192,7 @@ History.save = function()
 	return "<a href='"+url+historyb64+"'>"+historyb64+"</a>"
 }
 
-History.exec = function(parser)
+History.prototype.exec = function(parser)
 {
 	for (var i=0;i<this.content.length-1;i++)
 	{
@@ -201,7 +201,7 @@ History.exec = function(parser)
 	}
 }
 
-History.load = function(basestring)
+History.prototype.load = function(basestring)
 {
 	if (!basestring)
 		return "No command entered.";
@@ -254,7 +254,7 @@ window.addEventListener("load",
 
 		window.addEventListener('hashchange', processHash);
 		processHash();
-		flx.log("Fluxcon (",Config.version,") running");
+		flx.log("Fluxcon ",Config.version," (",Config.vername,") running");
 		flx.focusEditor();
 	}
 );
