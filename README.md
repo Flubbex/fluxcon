@@ -1,6 +1,6 @@
 A javascript console.
 
-##Current Features
+# Current Features
 * Takes code. Runs it. 
 
 # Planned
@@ -10,12 +10,15 @@ A javascript console.
 * Soft keyboard for basic statements.
 * Run / save / load shortcuts (storage module)
 * Soft keyboard
-### Module: History 
+
+## History 
 * Rename 'history' to 'session'
-### Module: Storage
+
+## Storage
 * Save active session from localDB.
 * Load session from localDB.
-### Module: Ajax
+
+### Ajax
 * Get requests
 
 ## Changelist
