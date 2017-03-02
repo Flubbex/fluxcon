@@ -12,20 +12,20 @@ html
 }
 body
 {
-	height: 90%;
+	height: 94.5%;
 	background-color: gray;
-	background: linear-gradient(90deg,
+	/*background: linear-gradient(90deg,
 								#7b7e89,
-								#36383f);
+								#36383f);*/
 }
 
 #console
 {
 	background-color: rgba(255,255,255,0.4);
-	width: 90%;
-	height: 75%;
-	margin-left: 4.75%;
-	margin-top: 2%;
+	width: 95%;
+	height: 50%;
+	margin-left: 1.75%;
+	margin-top: 0.5%;
 	overflow-y: scroll;
 }
 
@@ -54,31 +54,34 @@ body
 	width: 90%;
 	margin-left: 4.75%;
 	margin-top: 1%;
-	height: 10%;
+	height: 36%;
 }
 
 #input > *
 {
+	margin: 0.25%;
 	float: left;
 	background-color: rgba(0,0,0,0.4);
 	border: none;
 	color: white;
-	padding: 0.25%;
-	margin: 0.5%;
-	height: 75%;
 	font-size: 1.1em;
 }
 
 #input input:nth-child(1)
 {
-	padding-left: 1.5%;
-	width: 75%;
+	padding-left: 0.5%;
+	width: 99%;
+	height: 70.5%;
 }
-#input input:nth-child(2)
+#input input
 {
-	float: right;
-	width: 20%;
-	height: 82%;
+	width: 19.15%;
+	height: 25%;
+}
+
+#input input:hover
+{
+	background-color: rgba(255,255,255,0.2);
 }
 #footer
 {

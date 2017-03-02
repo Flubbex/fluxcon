@@ -1,6 +1,6 @@
 {
-  "name": "jsconsole",
-  "version": "1.0.0",
+  "name": "Fluxcon",
+  "version": "0.2.0",
   "description": "jsconsole",
   "main": "index.js",
   "scripts": {
@@ -8,9 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Flubbex/jsconsole.git"
+    "url": "git+https://github.com/Flubbex/fluxcon.git"
   },
   "keywords": [
+	"javascript",
     "js",
     "console",
     "3ds"
@@ -18,7 +19,7 @@
   "author": "Flubbex",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Flubbex/jsconsole/issues"
+    "url": "https://github.com/Flubbex/fluxcon/issues"
   },
-  "homepage": "https://github.com/Flubbex/jsconsole#readme"
+  "homepage": "https://github.com/Flubbex/fluxcon#readme"
 }
