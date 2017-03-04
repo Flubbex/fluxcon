@@ -2,7 +2,7 @@ var AjaxController 		= require("../controller/ajax");
 var HistoryController 	= require("../controller/history");
 
 var ConsoleView			= require("../view/console");
-var InputView			= require("../view/input");
+var EditorView			= require("../view/editor");
 					
 function Fluxcon()
 {
@@ -10,7 +10,7 @@ function Fluxcon()
 	this.history 	= new HistoryController();
 	
 	self = this;
-	InputView.on("input",function(inputstring)	
+	EditorView.on("input",function(inputstring)	
 						{	self.parseInput(inputstring) });
 };
 
@@ -44,7 +44,7 @@ Fluxcon.prototype.parseInput = function(string)
 	this.log( string ).style.color = "blue";
 	var result = this.parseLog(string).result;
 	
-	InputView.clear();
+	EditorView.clear();
 	
 	return result;
 };
@@ -72,23 +72,22 @@ Fluxcon.prototype.down = function()
 Fluxcon.prototype.timestamp = function()
 {
 	return function(d){
-		return "0"+d.getHours()	.toString().slice(0,2)+":"+
-			"0"+d.getMinutes()	.toString().slice(0,2)+":"+
-			"0"+d.getSeconds()	.toString().slice(0,2);
+		return "0"+d.getHours()	.toString().slice(0,1)+":"+
+			"0"+d.getMinutes()	.toString().slice(0,1)+":"+
+			"0"+d.getSeconds()	.toString().slice(0,1);
 	}(new Date());
 }
 
 Fluxcon.prototype.focusEditor = function()
 {
-	InputView.el.focus();
+	EditorView.el.focus();
 }
 
 Fluxcon.prototype.log = function out()
 {
-	var args = [].slice.call(arguments);
-		args.unshift(this.timestamp());
-	
-	var el = ConsoleView.log.apply(ConsoleView,args);
+	var args 		= [].slice.call(arguments);
+	var timestamp 	= this.timestamp();
+	var el = ConsoleView.log(timestamp,args.length>1?args.join(" "):args[0]);
 		el.scrollIntoView();
 		
 	return el;

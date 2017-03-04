@@ -1,11 +1,11 @@
-var emitonoff 	= require("emitonoff");
+var Emitter = require("./emitter");
 
 var Model = function(attributes)
 {
 	for (var attr in attributes)
 		this[attr] = attributes[attr];
-	
-	emitonoff(this);
 }
 
-return Model;
+Model.prototype = new Emitter();
+
+module.exports = Model;

@@ -1,79 +1,67 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var EmitOnOff = module.exports = function(thing){
-  if (!thing) thing = {};
+var Emitter = function()
+{
+	this.events = {};
+}
 
-  thing._subs = [];
-  thing._paused = false;
-  thing._pending = [];
+Emitter.prototype.emit = function()
+{
+	var args 		= [].slice.call(arguments);
+	var event		= args.shift();
+	var data		= args.shift();
+	var parent		= args.shift();
+	
+	args.unshift(data);
+	
+	if (!this.events[event])
+		throw new Error("Emitter: No such event "+event)
+	
+	var events = this.events[event];
+	
+	events.map(function(eventinfo)
+	{
+		var subargs = eventinfo.args.concat(args);
+		eventinfo.callback.apply(parent,subargs);
+	});
+	
+}
 
-  /**
-   * Sub of pubsub
-   * @param  {String}   name name of event
-   * @param  {Function} cb   your callback
-   */
-  thing.on = function(name, cb){
-    thing._subs[name] = thing._subs[name] || [];
-    thing._subs[name].push(cb);
-  };
-
-  /**
-   * remove sub of pubsub
-   * @param  {String}   name name of event
-   * @param  {Function} cb   your callback
-   */
-  thing.off = function(name, cb){
-    if (!thing._subs[name]) return;
-    for (var i in thing._subs[name]){
-      if (thing._subs[name][i] === cb){
-        thing._subs[name].splice(i);
-        break;
-      }
-    }
-  };
-
-  /**
-   * Pub of pubsub
-   * @param  {String}   name name of event
-   * @param  {Mixed}    data the data to publish
-   */
-  thing.emit = function(name){
-    if (!thing._subs[name]) return;
-
-    var args = Array.prototype.slice.call(arguments, 1);
-
-    if (thing._paused) {
-      thing._pending[name] = thing._pending[name] || [];
-      thing._pending[name].push(args)
-      return
-    }
-
-    for (var i in thing._subs[name]){
-      thing._subs[name][i].apply(thing, args);
-    }
-  };
-
-  thing.pause = function() {
-    thing._paused = true;
-  };
-
-  thing.resume = function() {
-    thing._paused = false;
-
-    for (var name in thing._pending) {
-      for (var i = 0; i < thing._pending[name].length; i++) {
-        thing.emit(name, thing._pending[name][i])
-      }
-    }
-  };
-
-  return thing;
+Emitter.prototype.on = function()
+{
+	//convert arguments to array
+	var args 		= [].slice.call(arguments);
+	var event		= args.shift();	//pop args[0]
+	var callback	= args.shift(); //pop args[0]
+	
+	var newevent = {callback:callback,args:args};
+	
+	if (!this.events[event])
+		this.events[event] = [];
+	
+	return this.events[event].push(newevent);
 };
+
+Emitter.prototype.off = function()
+{
+	var args 		= [].slice.call(arguments);
+	var event		= args.shift();	
+	var callback	= args.shift(); 
+	
+	this.events[event].filter(function(e){
+			return !e.callback===callback;
+	})
+};
+
+
+module.exports = Emitter;
+
 },{}],2:[function(require,module,exports){
-var emitonoff 	= require("emitonoff");
+var Emitter = require("./emitter");
 
 function View(attributes)
 {
 	this.properties = {};
+
 	for (var attr in attributes)
 		switch(typeof(attributes[attr]))
 		{
@@ -86,26 +74,30 @@ function View(attributes)
 		}
 	
 	var self = this;
+
 	View.domloaders.push(function(){
 		self.el = document.getElementById(self.properties.el);
 		if (self.initialize)
 			self.initialize();
 	});
-	emitonoff(this);
 }
 
+View.prototype = new Emitter();
+
 View.domloaders = [];
+
 View.domReady = function()
 {
 	for (var i=0;i<View.domloaders.length;i++)
 		View.domloaders[i]();
 }
+
 module.exports = View;
 
-},{"emitonoff":1}],3:[function(require,module,exports){
+},{"./emitter":1}],3:[function(require,module,exports){
 Config = {};
-Config.version = '0.2.1';
-Config.vername = "Sunny Taco";
+Config.version = "0.2.3";
+Config.vername = "Happy Pizza";
 
 module.exports = Config;
 
@@ -223,19 +215,22 @@ Object.dump = require("./util/object").dump;
 
 var Config 		= require("./config");
 var Fluxcon 	= require("./module/fluxcon");
-var ViewClass	=	require("./class/view");
+var ViewClass	= require("./class/view");
 
 window.addEventListener("load",
 	function(){
 		ViewClass.domReady();
+
 		var flx = new Fluxcon();
+
 		function printError(e){
 			flx.log(e);
 		};
 		
 		window.addEventListener('error',printError);
 
-		function processHash() {
+		function processHash() 
+		{
 		  const hash = location.hash.slice(1);
 		  if (hash)
 			{
@@ -264,7 +259,7 @@ var AjaxController 		= require("../controller/ajax");
 var HistoryController 	= require("../controller/history");
 
 var ConsoleView			= require("../view/console");
-var InputView			= require("../view/input");
+var EditorView			= require("../view/editor");
 					
 function Fluxcon()
 {
@@ -272,7 +267,7 @@ function Fluxcon()
 	this.history 	= new HistoryController();
 	
 	self = this;
-	InputView.on("input",function(inputstring)	
+	EditorView.on("input",function(inputstring)	
 						{	self.parseInput(inputstring) });
 };
 
@@ -306,7 +301,7 @@ Fluxcon.prototype.parseInput = function(string)
 	this.log( string ).style.color = "blue";
 	var result = this.parseLog(string).result;
 	
-	InputView.clear();
+	EditorView.clear();
 	
 	return result;
 };
@@ -334,23 +329,22 @@ Fluxcon.prototype.down = function()
 Fluxcon.prototype.timestamp = function()
 {
 	return function(d){
-		return "0"+d.getHours()	.toString().slice(0,2)+":"+
-			"0"+d.getMinutes()	.toString().slice(0,2)+":"+
-			"0"+d.getSeconds()	.toString().slice(0,2);
+		return "0"+d.getHours()	.toString().slice(0,1)+":"+
+			"0"+d.getMinutes()	.toString().slice(0,1)+":"+
+			"0"+d.getSeconds()	.toString().slice(0,1);
 	}(new Date());
 }
 
 Fluxcon.prototype.focusEditor = function()
 {
-	InputView.el.focus();
+	EditorView.el.focus();
 }
 
 Fluxcon.prototype.log = function out()
 {
-	var args = [].slice.call(arguments);
-		args.unshift(this.timestamp());
-	
-	var el = ConsoleView.log.apply(ConsoleView,args);
+	var args 		= [].slice.call(arguments);
+	var timestamp 	= this.timestamp();
+	var el = ConsoleView.log(timestamp,args.length>1?args.join(" "):args[0]);
 		el.scrollIntoView();
 		
 	return el;
@@ -358,7 +352,7 @@ Fluxcon.prototype.log = function out()
 
 module.exports = Fluxcon;
 
-},{"../controller/ajax":4,"../controller/history":5,"../view/console":9,"../view/input":10}],8:[function(require,module,exports){
+},{"../controller/ajax":4,"../controller/history":5,"../view/console":9,"../view/editor":10}],8:[function(require,module,exports){
 function object_dump(prop)
 {
 	var seen = [];
@@ -388,44 +382,41 @@ var ConsoleView = new View({
 		initialize:function()
 		{
 		},
-		log:function()
+		log:function(timestamp,data)
 		{
-			var args = [].slice.call(arguments);
-			var newelm = document.createElement("div");
-			
-			for (var i in args)
+			var newdiv 		= document.createElement("div");
+			var dataspan 	= document.createElement("span");
+			var timespan 	= document.createElement("span");
+			timespan.innerHTML = timestamp;
+	
+			switch (typeof(data))
 			{
-				var prop = args[i];
-				var newspan = document.createElement("span");
-				var string;
-					switch (typeof(prop))
-					{
-						case "object":
-							if (Error.prototype.isPrototypeOf(prop))
-								newspan.style.color = "red";
-						case "function":
-							string = prop.toString();
-							break;
-						case "number":
-							newspan.style.color = "darkorange";
-							newspan.style.fontFamily = "Courier New";
-						case "string":
-							string = prop;
-							break;
-						case "undefined":
-							string = "'undefined'";
-							newspan.style.color = "brown";
-							break;
-						default:
-							this.write("Warning: Unhandled type cast to string: ",typeof(prop))
-							string = prop.toString();
-							break;
-					}
-				newspan.innerHTML = string;
-				newelm.appendChild(newspan);
-			}
-			this.el.appendChild(newelm);
-			return newelm;
+				case "object":
+					if (Error.prototype.isPrototypeOf(data))
+					dataspan.style.color = "red";
+				case "function":
+					data = data.toString();
+					break;
+				case "number":
+					dataspan.style.color = "darkorange";
+					dataspan.style.fontFamily = "Courier New";
+				case "string":
+					break;
+				case "undefined":
+					data = "'undefined'";
+					dataspan.style.color = "brown";
+					break;
+				default:
+					this.log("Warning: Unhandled type cast to string: "+typeof(data))
+					data = data.toString();
+					break;
+			};
+
+			dataspan.innerHTML = data;
+			newdiv.appendChild(timespan);
+			newdiv.appendChild(dataspan);
+			this.el.appendChild(newdiv);
+			return newdiv;
 		}
 })
 
@@ -434,24 +425,40 @@ module.exports = ConsoleView;
 },{"../class/view":2}],10:[function(require,module,exports){
 var View = require("../class/view");
 
-var InputView = new View({
-		el:"text",
+var EditorView = new View({
+		el:"editor",
 		initialize:function()
 		{
-			var self = this;
-			this.el.addEventListener("keydown",function(e){
-				if (e.keyCode===13)
+			this.textbox = document.getElementById("text");
+			this.toolbox = {
+					tb_run:		document.getElementById("tb_run"),
+					tb_load:	document.getElementById("tb_load"),
+					tb_save:	document.getElementById("tb_save"),
+					tb_panic:	document.getElementById("tb_pan"),
+					tb_flux:	document.getElementById("tb_flux")
+				};
+			
+			for (var toolname in this.toolbox)
+			{
+				this.toolbox[toolname].addEventListener("click",this[toolname]);
+			}
+			document.addEventListener("keydown",function(key){
+				if (key.keyCode===13) //13 === "Enter"
 				{
-					self.emit("input",self.el.value);
+					EditorView.emit("input",EditorView.textbox.value);
 				}
 			});	
 		},
 		clear:function()
 		{
-			this.el.value = "";
+			this.textbox.value = "";
+		},
+		tb_run:function()
+		{
+			EditorView.emit("input",EditorView.textbox.value);
 		}
 })
 
-module.exports = InputView;
+module.exports = EditorView;
 
 },{"../class/view":2}]},{},[6])

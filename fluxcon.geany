@@ -28,8 +28,10 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=80;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fmodule%2Ffluxcon.js;0;4
-FILE_NAME_1=839;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Findex.js;0;4
+FILE_NAME_0=460;CSS;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fdocs%2Fcss%2Findex.css;0;4
+FILE_NAME_1=1019;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fview%2Fconsole.js;0;4
+FILE_NAME_2=1889;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fmodule%2Ffluxcon.js;0;4
+FILE_NAME_3=0;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Findex.js;0;4
 
 [VTE]
 last_dir=/media/michael/data/Projects/fluxcon
