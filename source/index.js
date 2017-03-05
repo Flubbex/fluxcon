@@ -4,39 +4,39 @@ var Config 		= require("./config");
 var Fluxcon 	= require("./module/fluxcon");
 var ViewClass	= require("./class/view");
 
-window.addEventListener("load",
-	function(){
-		ViewClass.domReady();
+function setup()
+{
+	ViewClass.domReady();
 
-		var flx = new Fluxcon();
+	var flx = new Fluxcon(Config);
 
-		function printError(e){
-			flx.log(e);
-		};
-		
-		window.addEventListener('error',printError);
+	function printError(e){
+		flx.log(e);
+	};
+	
+	window.addEventListener('error',printError);
 
-		function processHash() 
+	function processHash() 
+	{
+	  const hash = location.hash.slice(1);
+	  if (hash)
 		{
-		  const hash = location.hash.slice(1);
-		  if (hash)
+			try //to load as base64
 			{
-				try //to load as base64
-				{
-					flx.parseInput ( atob( hash ) );
-				}
-				catch (e)
-				{
-					flx.parseInput(hash)
-				}
-				
-				location.hash = "";
+				flx.parseInput ( atob( hash ) );
 			}
+			catch (e)
+			{
+				flx.parseInput(hash)
+			}
+			
+			location.hash = "";
 		}
-
-		window.addEventListener('hashchange', processHash);
-		processHash();
-		flx.log("Fluxcon ",Config.version," (",Config.vername,") running");
-		flx.focusEditor();
 	}
-);
+
+	window.addEventListener('hashchange', processHash);
+	processHash();
+	flx.focusEditor();
+}
+
+window.addEventListener("load",setup);

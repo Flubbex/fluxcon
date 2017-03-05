@@ -1,27 +1,34 @@
+#Fluxcon
 A javascript console.
 
-# Current Features
+##Current Features
 * Takes code. Runs it. 
 
 # Planned
 ## Layout
-* Better dual screen layout.
-* Replace text box with text area.
 * Soft keyboard for basic statements.
-* Run / save / load shortcuts (storage module)
+* Run / save / load shortcuts (through storage module)
 * Soft keyboard
-
-## History 
+### Module: History 
 * Rename 'history' to 'session'
-
-## Storage
+### Module: Storage
 * Save active session from localDB.
 * Load session from localDB.
-
-### Ajax
+### Module: Ajax
 * Get requests
 
+## Next version
+### 0.2.5
+* Soft keyboard (Flux)
+* Saving and loading now based on storage module
+
 ## Changelist
+### 0.2.4
+* Fixed title
+* Implemented toolbox items: save, load
+* Created basic storage module (unused by toolbox for now)
+* Improved error handling
+* Submitting now happens on ctrl+enter for better textarea support
 ### 0.2.3 (Happy Pizza)
 * Better layout
 * Better structure
@@ -39,6 +46,5 @@ A javascript console.
 * Code is now properly organized and MVC-compliant.
 * All beta-functions removed (Or at least, unsupported for now)
 * Basic console functionality works (write things, run them) 
-
 ### 0.1.0 - 0.1.7
 * Initial testing versions. 

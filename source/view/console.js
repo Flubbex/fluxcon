@@ -5,6 +5,11 @@ var ConsoleView = new View({
 		initialize:function()
 		{
 		},
+		clear:function(placeholder)
+		{
+			this.el.innerHTML = "";
+			return placeholder || "console cleared.";
+		},
 		log:function(timestamp,data)
 		{
 			var newdiv 		= document.createElement("div");
@@ -15,8 +20,20 @@ var ConsoleView = new View({
 			switch (typeof(data))
 			{
 				case "object":
-					if (Error.prototype.isPrototypeOf(data))
-					dataspan.style.color = "red";
+					if (data.type==="error") //General error
+					{
+						dataspan.style.color = "red";
+						var prettyfilename = data.filename.slice(data.filename.lastIndexOf("/")+1);
+											
+						data = data.message + 
+							" ["+prettyfilename+":"+data.lineno+":"+data.colno+"]";
+					}
+					else if(data.stack)
+					{
+						dataspan.style.color = "red";
+						data = data.message;
+						break;
+					}
 				case "function":
 					data = data.toString();
 					break;

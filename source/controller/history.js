@@ -1,7 +1,9 @@
 /*
  * TODO: Add TinyURL Support 
  * //http://tinyurl.com/create.php?source=indexpage&url=http://www.google.com&submit=Make+TinyURL!&alias=
- */
+ * TODO: Interface with storage
+ * 
+ * /
  /**
  * History Module
  * For storing console history information / playback
@@ -13,7 +15,7 @@ var History	= function()
 
 History.key	= 0;
 
-History.toString = function(title)
+History.prototype.toString = function(title)
 {
 	console.log(this.content.length)
 	if (this.content.length===0)
@@ -48,7 +50,7 @@ History.prototype.clear = function()
 
 History.prototype.save = function()
 {
-	var historyb64 	= btoa("History.load('"+btoa(JSON.stringify(this))+"')");
+	var historyb64 	= btoa("this.history.load('"+btoa(JSON.stringify(this))+"')");
 	var url 		= location.toString();
 	
 	if (!url.endsWith("#"))
@@ -77,7 +79,6 @@ History.prototype.load = function(basestring)
 		this.content[attr] = data[attr]
 	
 	this.exec();
-	
 	return this.toString("Loaded history");
 }
 

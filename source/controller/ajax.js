@@ -1,5 +1,6 @@
 var Ajax = function()
 {
+	var ajax = this;
 };
 
 Ajax.prototype.get = function(address)

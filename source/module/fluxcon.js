@@ -1,17 +1,38 @@
 var AjaxController 		= require("../controller/ajax");
 var HistoryController 	= require("../controller/history");
+var StorageController	= require("../controller/storage");
 
 var ConsoleView			= require("../view/console");
 var EditorView			= require("../view/editor");
 					
-function Fluxcon()
+function Fluxcon(config)
 {
+	this.config		= config;
 	this.ajax 		= new AjaxController();
 	this.history 	= new HistoryController();
+	this.storage	= new StorageController();
+	
+	window.fluxconfig	= config;
+	window.ajax 		= this.ajax;
+	window.past		 	= this.history;
+	window.storage 		= this.storage;
+	window.fluxcon		= this;
 	
 	self = this;
 	EditorView.on("input",function(inputstring)	
-						{	self.parseInput(inputstring) });
+						{	
+							self.parseInput(inputstring) 
+						});
+	
+	EditorView.on("clearConsole",Fluxcon.clear);
+	
+	this.parseLog(this.parse("atob('"+fluxconfig.console.init+"')"))
+		.el.style.color = "gold";
+};
+
+Fluxcon.prototype.clear = function(placeholder)
+{
+	return ConsoleView.clear(placeholder);
 };
 
 Fluxcon.prototype.parse = function(string)
@@ -43,9 +64,6 @@ Fluxcon.prototype.parseInput = function(string)
 {
 	this.log( string ).style.color = "blue";
 	var result = this.parseLog(string).result;
-	
-	EditorView.clear();
-	
 	return result;
 };
 
