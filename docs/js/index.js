@@ -96,14 +96,16 @@ module.exports = View;
 
 },{"./emitter":1}],3:[function(require,module,exports){
 Config = {};
-Config.version = "0.2.3";
+Config.version = "0.2.5";
 Config.vername = "Happy Pizza";
-
+Config.console = {};
+Config.console.init = "J0ZsdXhjb24gJytmbHV4Y29uZmlnLnZlcnNpb24rJyAoJytmbHV4Y29uZmlnLnZlcm5hbWUrJykgcnVubmluZy4n";
 module.exports = Config;
 
 },{}],4:[function(require,module,exports){
 var Ajax = function()
 {
+	var ajax = this;
 };
 
 Ajax.prototype.get = function(address)
@@ -128,7 +130,9 @@ module.exports = Ajax;
 /*
  * TODO: Add TinyURL Support 
  * //http://tinyurl.com/create.php?source=indexpage&url=http://www.google.com&submit=Make+TinyURL!&alias=
- */
+ * TODO: Interface with storage
+ * 
+ * /
  /**
  * History Module
  * For storing console history information / playback
@@ -140,7 +144,7 @@ var History	= function()
 
 History.key	= 0;
 
-History.toString = function(title)
+History.prototype.toString = function(title)
 {
 	console.log(this.content.length)
 	if (this.content.length===0)
@@ -175,7 +179,7 @@ History.prototype.clear = function()
 
 History.prototype.save = function()
 {
-	var historyb64 	= btoa("History.load('"+btoa(JSON.stringify(this))+"')");
+	var historyb64 	= btoa("this.history.load('"+btoa(JSON.stringify(this))+"')");
 	var url 		= location.toString();
 	
 	if (!url.endsWith("#"))
@@ -204,71 +208,100 @@ History.prototype.load = function(basestring)
 		this.content[attr] = data[attr]
 	
 	this.exec();
-	
 	return this.toString("Loaded history");
 }
 
 module.exports = History;
 
 },{}],6:[function(require,module,exports){
+var Storage = function()
+{
+	this.session 	= window.sessionStorage;
+	this.local		= window.localStorage;
+}
+
+module.exports = Storage;
+
+},{}],7:[function(require,module,exports){
 Object.dump = require("./util/object").dump;
 
 var Config 		= require("./config");
 var Fluxcon 	= require("./module/fluxcon");
 var ViewClass	= require("./class/view");
 
-window.addEventListener("load",
-	function(){
-		ViewClass.domReady();
+function setup()
+{
+	ViewClass.domReady();
 
-		var flx = new Fluxcon();
+	var flx = new Fluxcon(Config);
 
-		function printError(e){
-			flx.log(e);
-		};
-		
-		window.addEventListener('error',printError);
+	function printError(e){
+		flx.log(e);
+	};
+	
+	window.addEventListener('error',printError);
 
-		function processHash() 
+	function processHash() 
+	{
+	  const hash = location.hash.slice(1);
+	  if (hash)
 		{
-		  const hash = location.hash.slice(1);
-		  if (hash)
+			try //to load as base64
 			{
-				try //to load as base64
-				{
-					flx.parseInput ( atob( hash ) );
-				}
-				catch (e)
-				{
-					flx.parseInput(hash)
-				}
-				
-				location.hash = "";
+				flx.parseInput ( atob( hash ) );
 			}
+			catch (e)
+			{
+				flx.parseInput(hash)
+			}
+			
+			location.hash = "";
 		}
-
-		window.addEventListener('hashchange', processHash);
-		processHash();
-		flx.log("Fluxcon ",Config.version," (",Config.vername,") running");
-		flx.focusEditor();
 	}
-);
 
-},{"./class/view":2,"./config":3,"./module/fluxcon":7,"./util/object":8}],7:[function(require,module,exports){
+	window.addEventListener('hashchange', processHash);
+	processHash();
+	flx.focusEditor();
+}
+
+window.addEventListener("load",setup);
+
+},{"./class/view":2,"./config":3,"./module/fluxcon":8,"./util/object":9}],8:[function(require,module,exports){
 var AjaxController 		= require("../controller/ajax");
 var HistoryController 	= require("../controller/history");
+var StorageController	= require("../controller/storage");
 
 var ConsoleView			= require("../view/console");
 var EditorView			= require("../view/editor");
 					
-function Fluxcon()
+function Fluxcon(config)
 {
+	this.config		= config;
 	this.ajax 		= new AjaxController();
 	this.history 	= new HistoryController();
+	this.storage	= new StorageController();
+	
+	window.fluxconfig	= config;
+	window.ajax 		= this.ajax;
+	window.past		 	= this.history;
+	window.storage 		= this.storage;
+	window.fluxcon		= this;
 	
 	self = this;
 	EditorView.on("input",function(inputstring)	
-						{	self.parseInput(inputstring) });
+						{	
+							self.parseInput(inputstring) 
+						});
+	
+	EditorView.on("clearConsole",Fluxcon.clear);
+	
+	this.parseLog(this.parse("atob('"+fluxconfig.console.init+"')"))
+		.el.style.color = "gold";
+};
+
+Fluxcon.prototype.clear = function(placeholder)
+{
+	return ConsoleView.clear(placeholder);
 };
 
 Fluxcon.prototype.parse = function(string)
@@ -300,9 +333,6 @@ Fluxcon.prototype.parseInput = function(string)
 {
 	this.log( string ).style.color = "blue";
 	var result = this.parseLog(string).result;
-	
-	EditorView.clear();
-	
 	return result;
 };
 
@@ -352,7 +382,7 @@ Fluxcon.prototype.log = function out()
 
 module.exports = Fluxcon;
 
-},{"../controller/ajax":4,"../controller/history":5,"../view/console":9,"../view/editor":10}],8:[function(require,module,exports){
+},{"../controller/ajax":4,"../controller/history":5,"../controller/storage":6,"../view/console":10,"../view/editor":11}],9:[function(require,module,exports){
 function object_dump(prop)
 {
 	var seen = [];
@@ -374,13 +404,18 @@ module.exports = {
 	dump:object_dump
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var View = require("../class/view");
 
 var ConsoleView = new View({
 		el:"console",
 		initialize:function()
 		{
+		},
+		clear:function(placeholder)
+		{
+			this.el.innerHTML = "";
+			return placeholder || "console cleared.";
 		},
 		log:function(timestamp,data)
 		{
@@ -392,8 +427,20 @@ var ConsoleView = new View({
 			switch (typeof(data))
 			{
 				case "object":
-					if (Error.prototype.isPrototypeOf(data))
-					dataspan.style.color = "red";
+					if (data.type==="error") //General error
+					{
+						dataspan.style.color = "red";
+						var prettyfilename = data.filename.slice(data.filename.lastIndexOf("/")+1);
+											
+						data = data.message + 
+							" ["+prettyfilename+":"+data.lineno+":"+data.colno+"]";
+					}
+					else if(data.stack)
+					{
+						dataspan.style.color = "red";
+						data = data.message;
+						break;
+					}
 				case "function":
 					data = data.toString();
 					break;
@@ -422,7 +469,7 @@ var ConsoleView = new View({
 
 module.exports = ConsoleView;
 
-},{"../class/view":2}],10:[function(require,module,exports){
+},{"../class/view":2}],11:[function(require,module,exports){
 var View = require("../class/view");
 
 var EditorView = new View({
@@ -440,25 +487,61 @@ var EditorView = new View({
 			
 			for (var toolname in this.toolbox)
 			{
-				this.toolbox[toolname].addEventListener("click",this[toolname]);
+				this.toolbox[toolname]
+				.addEventListener("click",this[toolname]);
 			}
 			document.addEventListener("keydown",function(key){
-				if (key.keyCode===13) //13 === "Enter"
+				if (key.keyCode===13)	//No empty runs 
 				{
+					if (EditorView.textbox.value.length===0)
+					{
+						window.setTimeout(function(){
+						EditorView.textbox.value = "";
+						},0);
+						return
+					}
+					if (key.shiftKey)
+						return
+					
 					EditorView.emit("input",EditorView.textbox.value);
+					EditorView.clearText();
 				}
 			});	
 		},
-		clear:function()
+		clearText:function()
 		{
-			this.textbox.value = "";
+			window.setTimeout(function(){
+				EditorView.textbox.value = "";
+			},0);
 		},
 		tb_run:function()
 		{
+			if (EditorView.textbox.value==="")
+				return
+				
 			EditorView.emit("input",EditorView.textbox.value);
+			EditorView.clearText();
+		},
+		tb_save:function()
+		{
+			EditorView.emit("input","this.history.save()");
+		},
+		tb_load:function()
+		{
+			var source = prompt("Paste your saucecode here.");
+			EditorView.emit("clearConsole");
+			EditorView.emit("input","this.history.load('"+source+"')");
+		},
+		tb_panic:function()
+		{
+			EditorView.emit("input","alert('AAAAAAH!')");
+		},
+		tb_flux:function()
+		{
+			EditorView.emit("toggleflux");
 		}
 })
 
 module.exports = EditorView;
 
-},{"../class/view":2}]},{},[6])
+},{"../class/view":2}]},{},[7])
