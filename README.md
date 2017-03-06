@@ -9,11 +9,14 @@ A javascript console.
 * Soft keyboard for basic statements.
 * Run / save / load shortcuts (through storage module)
 * Soft keyboard
+
 ## Module: History 
 * Rename 'history' to 'session'
+
 ## Module: Storage
 * Save active session from localDB.
 * Load session from localDB.
+
 ## Module: Ajax
 * Get requests
 
