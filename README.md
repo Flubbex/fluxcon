@@ -14,7 +14,7 @@ A javascript console.
 * Rename 'history' to 'session'
 
 ## Module: Storage
-* Save active session from localDB.
+* Save active session to localDB.
 * Load session from localDB.
 
 ## Module: Ajax
