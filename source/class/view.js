@@ -1,4 +1,4 @@
-var Emitter = require("./emitter");
+var Emitter = require("./fluxmitter");
 
 function View(attributes)
 {
@@ -17,10 +17,13 @@ function View(attributes)
 	
 	var self = this;
 
-	View.domloaders.push(function(){
-		self.el = document.getElementById(self.properties.el);
-		if (self.initialize)
-			self.initialize();
+	View.domloaders.push(function(window){
+		self.el = window
+					.document
+					.getElementById(self.properties.el);
+					
+		if (self.initialize && typeof(self.initialize)==='function')
+			self.initialize(window);
 	});
 }
 
@@ -28,10 +31,10 @@ View.prototype = new Emitter();
 
 View.domloaders = [];
 
-View.domReady = function()
+View.domReady = function(window)
 {
 	for (var i=0;i<View.domloaders.length;i++)
-		View.domloaders[i]();
+		View.domloaders[i](window);
 }
 
 module.exports = View;

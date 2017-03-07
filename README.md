@@ -4,28 +4,27 @@ A javascript console.
 ##Current Features
 * Takes code. Runs it. 
 
-# Planned
-## Layout
-* Soft keyboard for basic statements.
-* Run / save / load shortcuts (through storage module)
-* Soft keyboard
-
-## Module: History 
-* Rename 'history' to 'session'
-
-## Module: Storage
-* Save active session to localDB.
-* Load session from localDB.
-
-## Module: Ajax
-* Get requests
-
-## Next version
-## 0.2.5
-* Soft keyboard (Flux)
+## Next major version
+## 0.3.0 (???)
 * Saving and loading now based on storage module
+* Console code run from storage module
+* Custom bootscripts (selective tool loading)
+* Hotkey support
+* Soft keyboard (Flux)
+* Clipboard tool
+* Tinyurl/Pastebin tool
 
 ## Changelist
+
+##0.2.5 (Savage Spaghetti)
+* More code layout changing [move controllers tools,rmdir modules]
+* Modified emitter, renamed to fluxmitter
+* new fluxcon controller, acts as previous fluxcon module (but better)
+* Dropped fluxcon module for fluxcon controller
+* Heavily modified index to support new structure
+* Updated initial payload to reflect changes in structure
+* Finally added boolean pretty printing. Purple for royalty.
+
 ## 0.2.4
 * Fixed title
 * Implemented toolbox items: save, load

@@ -19,6 +19,25 @@ var ConsoleView = new View({
 	
 			switch (typeof(data))
 			{
+				case "string":
+					//don't need to cast anything
+					break;
+				case "function":
+					data = data.toString();
+					break;
+				case "number":
+					dataspan.style.color = "darkorange";
+					dataspan.style.fontFamily = "Courier New";
+					break;
+				case "boolean":
+					dataspan.style.color = "purple";
+					dataspan.style.fontWeight = 'bold';
+					dataspan.style.fontFamily = "Courier New";
+					break;
+				case "undefined":
+					data = "'undefined'";
+					dataspan.style.color = "brown";
+					break;
 				case "object":
 					if (data.type==="error") //General error
 					{
@@ -34,20 +53,9 @@ var ConsoleView = new View({
 						data = data.message;
 						break;
 					}
-				case "function":
-					data = data.toString();
-					break;
-				case "number":
-					dataspan.style.color = "darkorange";
-					dataspan.style.fontFamily = "Courier New";
-				case "string":
-					break;
-				case "undefined":
-					data = "'undefined'";
-					dataspan.style.color = "brown";
 					break;
 				default:
-					this.log("Warning: Unhandled type cast to string: "+typeof(data))
+					this.log("Warning: Unhandled type cast to string: "+typeof(data));
 					data = data.toString();
 					break;
 			};

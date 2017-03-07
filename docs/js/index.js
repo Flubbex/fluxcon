@@ -1,47 +1,73 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Emitter = function()
+// Extend an objects prototype with fluxmitter
+// Returns an empty object with fluxmitter as prototype if root===null
+var fluxmitter = function(root)
 {
-	this.events = {};
+	if (!root)	//no root was given
+		root = Object.create(fluxmitter)
+	else if (!root.prototype)	//root was given but lacks a prototype
+		root.prototype = Object.create(fluxmitter)
+	else 	//root given but has a prototype
+		for (var methodname in fluxmitter)
+			if (!root.prototype[methodname])
+				root.prototype[methodname] = fluxmitter[methodname];
+		
+	//don't clobber existing event tables		
+	if (!root.events)
+		root.events = {}
+	
+	return root;
 }
 
-Emitter.prototype.emit = function()
+//Emit an event to the fluxmitter 
+// Arguments 
+//		event (string, name of event chain to trigger)
+//		[...] (objects as parameters for the event) 
+fluxmitter.emit = function() //event,data,args[0],...
 {
 	var args 		= [].slice.call(arguments);
 	var event		= args.shift();
-	var data		= args.shift();
-	var parent		= args.shift();
-	
-	args.unshift(data);
 	
 	if (!this.events[event])
-		throw new Error("Emitter: No such event "+event)
+		throw new Error("fluxmitter: No such event "+event)
 	
 	var events = this.events[event];
 	
-	events.map(function(eventinfo)
+	return events.map(function(eventinfo)
 	{
-		var subargs = eventinfo.args.concat(args);
-		eventinfo.callback.apply(parent,subargs);
+		var argsextended = eventinfo.args.concat(args);
+		return {eventinfo:eventinfo,
+				result:eventinfo.callback.apply(eventinfo.parent,argsextended)
+			};
 	});
 	
 }
-
-Emitter.prototype.on = function()
+// Add function to event chain
+// Arguments
+//	event		(string, name of event chain to add callback to)
+//	callback	(function, method to add to event chain)
+//	parent		(object, will be passed as 'this' to callback)
+//	[...]		(objects as primary arguments	
+fluxmitter.on = function() //event,callback,asThis,arg[0],...
 {
 	//convert arguments to array
 	var args 		= [].slice.call(arguments);
-	var event		= args.shift();	//pop args[0]
-	var callback	= args.shift(); //pop args[0]
+	var event		= args.shift();	
+	var callback	= args.shift(); 
+	var parent		= args.shift();
 	
-	var newevent = {callback:callback,args:args};
+	var neweventinfo = {callback:callback,
+						parent:parent,
+						args:args};
 	
 	if (!this.events[event])
 		this.events[event] = [];
 	
-	return this.events[event].push(newevent);
+	return this.events[event].push(neweventinfo);
 };
 
-Emitter.prototype.off = function()
+//Removes callback from event chain
+fluxmitter.off = function()
 {
 	var args 		= [].slice.call(arguments);
 	var event		= args.shift();	
@@ -53,10 +79,11 @@ Emitter.prototype.off = function()
 };
 
 
-module.exports = Emitter;
+module.exports = fluxmitter;
+
 
 },{}],2:[function(require,module,exports){
-var Emitter = require("./emitter");
+var Emitter = require("./fluxmitter");
 
 function View(attributes)
 {
@@ -75,10 +102,13 @@ function View(attributes)
 	
 	var self = this;
 
-	View.domloaders.push(function(){
-		self.el = document.getElementById(self.properties.el);
-		if (self.initialize)
-			self.initialize();
+	View.domloaders.push(function(window){
+		self.el = window
+					.document
+					.getElementById(self.properties.el);
+					
+		if (self.initialize && typeof(self.initialize)==='function')
+			self.initialize(window);
 	});
 }
 
@@ -86,23 +116,210 @@ View.prototype = new Emitter();
 
 View.domloaders = [];
 
-View.domReady = function()
+View.domReady = function(window)
 {
 	for (var i=0;i<View.domloaders.length;i++)
-		View.domloaders[i]();
+		View.domloaders[i](window);
 }
 
 module.exports = View;
 
-},{"./emitter":1}],3:[function(require,module,exports){
+},{"./fluxmitter":1}],3:[function(require,module,exports){
+//IDEA: Loaded controllers in config
+
 Config = {};
 Config.version = "0.2.5";
-Config.vername = "Happy Pizza";
+Config.vername = "Savage Spaghetti";
 Config.console = {};
-Config.console.init = "J0ZsdXhjb24gJytmbHV4Y29uZmlnLnZlcnNpb24rJyAoJytmbHV4Y29uZmlnLnZlcm5hbWUrJykgcnVubmluZy4n";
+Config.console.init = "J0ZsdXhjb24gJytmbHV4Y29uc29sZS5jb25maWcudmVyc2lvbisnICgnK2ZsdXhjb25zb2xlLmNvbmZpZy52ZXJuYW1lKycpIHJ1bm5pbmcuJw==";
 module.exports = Config;
 
 },{}],4:[function(require,module,exports){
+var AjaxTool 	= require("../tool/ajax");
+var HistoryTool = require("../tool/history");
+var StorageTool	= require("../tool/storage");
+
+var ConsoleView			= require("../view/console");
+var EditorView			= require("../view/editor");
+					
+function FluxController(config)
+{
+	this.config		= config || {};
+	this.ajax 		= new AjaxTool();
+	this.history 	= new HistoryTool();
+	this.storage	= new StorageTool();
+	
+	//TODO: Stop being lazy
+	if (window)
+	{
+		window.fluxconsole = this;
+	}
+	
+	EditorView.on("input",this.parseInput,this);
+	
+	EditorView.on("clearConsole",this.clear,this);
+	
+	
+	//Load initial 'payload' (prints a pretty message about the console running)
+	//TODO: Check if init payload exists in storage, load that instead
+	var payload = this.parse("atob('"+config.console.init+"')");
+	console.log(payload)
+	var newdiv = this.parseLog(payload,true);
+	
+	//Make it prettier (all bubbles to green to indicate success)
+	Array.prototype.slice.call(newdiv.el.children)
+		.map(function(child)
+		{
+			child.style.backgroundColor = 'rgba(128,200,64,128)';
+		})
+	
+};
+
+FluxController.prototype.timestamp = function()
+{
+	return function(d){
+		return "0"+d.getHours()	.toString().slice(0,1)+":"+
+			"0"+d.getMinutes()	.toString().slice(0,1)+":"+
+			"0"+d.getSeconds()	.toString().slice(0,1);
+	}(new Date());
+}
+
+FluxController.prototype.log = function out()
+{
+	var args 		= [].slice.call(arguments);
+	var timestamp 	= this.timestamp();
+	var el = ConsoleView.log(timestamp,args.length>1?args.join(" "):args[0]);
+		el.scrollIntoView();
+		
+	return el;
+};
+
+FluxController.prototype.parse = function(string)
+{
+	var result = null
+	
+	try 				{	result = eval(string);	}
+	catch (anyException){	result = anyException	};
+	
+	return result;
+};
+
+FluxController.prototype.parseLog = function(string,nohistory)
+{
+	var result	= this.parse( string );
+	var newelm	= this.log	( result );
+	
+	if (!nohistory)
+		this.history.push({	time:		this.timestamp(),
+							command:	string})
+		
+	return {el:newelm,result:result};
+}
+
+FluxController.prototype.parseInput = function(string)
+{
+	this.log( string ).style.color = "blue";
+	var result = this.parseLog(string).result;
+	return result;
+};
+
+FluxController.prototype.up = function()
+{
+	if (this.history.length===0)
+		return false
+		
+	this.history.key 		= this.history.key+1>this.history.length?
+													1:this.history.key+1;
+	var lastcommand 		= this.history[this.history.key];
+	this.input.elm.value 	= lastcommand.command;
+};
+FluxController.prototype.down = function()
+{
+	if (this.history.length===0)
+		return false
+		
+	this.history.key 		= this.history.key-1<0?0:this.history.key-1;
+	var lastcommand 		= this.history[this.history.key];
+	this.input.elm.value 	= lastcommand.command;
+};
+
+FluxController.prototype.focusEditor = function()
+{
+	EditorView.el.focus();
+}
+
+FluxController.prototype.processHash = function() 
+{
+	const hash = location.hash.slice(1);
+	if (hash)
+	{
+		//try and load as base64
+		try {	fluxconsole.parseInput ( atob( hash ) );}
+		catch (e){	fluxconsole.parseInput(hash);		};
+		
+		//clear hash
+		location.hash = "";
+	}
+}
+
+FluxController.prototype.clear = function(placeholder)
+{
+	return ConsoleView.clear(placeholder);
+};
+
+module.exports = FluxController;
+
+},{"../tool/ajax":6,"../tool/history":7,"../tool/storage":8,"../view/console":10,"../view/editor":11}],5:[function(require,module,exports){
+Object.dump = require("./util/object").dump;
+
+/*IDEA: Hotkey controller [view -> controller/hotkey]
+ **/
+ 
+var Config 		= require("./config");
+
+var FluxController = require("./controller/flux");
+
+var ViewClass	= require("./class/view");
+
+var FluxconModule = (function()
+{
+	function ready(window)
+	{
+		ViewClass.domReady(window);
+
+		if (!window.fluxconsole)
+			window.fluxconsole = new FluxController(Config);
+			
+		window.addEventListener('error',
+								window.fluxconsole.log);
+								
+		window.addEventListener('hashchange', 
+								window.fluxconsole.processHash);
+		
+		window.fluxconsole.processHash();
+		window.fluxconsole.focusEditor();
+		
+		return window.fluxconsole;
+	};
+	
+	return function(window)
+	{
+		if (window && window.addEventListener)
+			window.addEventListener("load",function(){
+				ready(window);
+			});
+		else
+			throw new Error("Invalid window object. Running from Node?");
+		
+		return true;
+	}
+	
+}());
+
+if (typeof(window)==='object' && FluxconModule(window))
+	console.log("Fluxcon loaded succesfully");
+
+},{"./class/view":2,"./config":3,"./controller/flux":4,"./util/object":9}],6:[function(require,module,exports){
 var Ajax = function()
 {
 	var ajax = this;
@@ -126,7 +343,7 @@ Ajax.prototype.get = function(address)
 
 module.exports = Ajax;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*
  * TODO: Add TinyURL Support 
  * //http://tinyurl.com/create.php?source=indexpage&url=http://www.google.com&submit=Make+TinyURL!&alias=
@@ -213,7 +430,7 @@ History.prototype.load = function(basestring)
 
 module.exports = History;
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Storage = function()
 {
 	this.session 	= window.sessionStorage;
@@ -222,167 +439,7 @@ var Storage = function()
 
 module.exports = Storage;
 
-},{}],7:[function(require,module,exports){
-Object.dump = require("./util/object").dump;
-
-var Config 		= require("./config");
-var Fluxcon 	= require("./module/fluxcon");
-var ViewClass	= require("./class/view");
-
-function setup()
-{
-	ViewClass.domReady();
-
-	var flx = new Fluxcon(Config);
-
-	function printError(e){
-		flx.log(e);
-	};
-	
-	window.addEventListener('error',printError);
-
-	function processHash() 
-	{
-	  const hash = location.hash.slice(1);
-	  if (hash)
-		{
-			try //to load as base64
-			{
-				flx.parseInput ( atob( hash ) );
-			}
-			catch (e)
-			{
-				flx.parseInput(hash)
-			}
-			
-			location.hash = "";
-		}
-	}
-
-	window.addEventListener('hashchange', processHash);
-	processHash();
-	flx.focusEditor();
-}
-
-window.addEventListener("load",setup);
-
-},{"./class/view":2,"./config":3,"./module/fluxcon":8,"./util/object":9}],8:[function(require,module,exports){
-var AjaxController 		= require("../controller/ajax");
-var HistoryController 	= require("../controller/history");
-var StorageController	= require("../controller/storage");
-
-var ConsoleView			= require("../view/console");
-var EditorView			= require("../view/editor");
-					
-function Fluxcon(config)
-{
-	this.config		= config;
-	this.ajax 		= new AjaxController();
-	this.history 	= new HistoryController();
-	this.storage	= new StorageController();
-	
-	window.fluxconfig	= config;
-	window.ajax 		= this.ajax;
-	window.past		 	= this.history;
-	window.storage 		= this.storage;
-	window.fluxcon		= this;
-	
-	self = this;
-	EditorView.on("input",function(inputstring)	
-						{	
-							self.parseInput(inputstring) 
-						});
-	
-	EditorView.on("clearConsole",Fluxcon.clear);
-	
-	this.parseLog(this.parse("atob('"+fluxconfig.console.init+"')"))
-		.el.style.color = "gold";
-};
-
-Fluxcon.prototype.clear = function(placeholder)
-{
-	return ConsoleView.clear(placeholder);
-};
-
-Fluxcon.prototype.parse = function(string)
-{
-	try
-	{
-			return eval(string);
-	}
-	catch (anyException)
-	{
-			return anyException
-	}
-	
-	return null
-};
-Fluxcon.prototype.parseLog = function(string,nohistory)
-{
-	var result	= this.parse( string );
-	var newelm	= this.log	( result );
-	
-	if (!nohistory)
-		this.history.push({	time:		this.timestamp(),
-							command:	string})
-		
-	return {el:newelm,result:result};
-}
-
-Fluxcon.prototype.parseInput = function(string)
-{
-	this.log( string ).style.color = "blue";
-	var result = this.parseLog(string).result;
-	return result;
-};
-
-Fluxcon.prototype.up = function()
-{
-	if (this.history.length===0)
-		return false
-		
-	this.history.key 		= this.history.key+1>this.history.length?
-													1:this.history.key+1;
-	var lastcommand 		= this.history[this.history.key];
-	this.input.elm.value 	= lastcommand.command;
-};
-Fluxcon.prototype.down = function()
-{
-	if (this.history.length===0)
-		return false
-		
-	this.history.key 		= this.history.key-1<0?0:this.history.key-1;
-	var lastcommand 		= this.history[this.history.key];
-	this.input.elm.value 	= lastcommand.command;
-};
-
-Fluxcon.prototype.timestamp = function()
-{
-	return function(d){
-		return "0"+d.getHours()	.toString().slice(0,1)+":"+
-			"0"+d.getMinutes()	.toString().slice(0,1)+":"+
-			"0"+d.getSeconds()	.toString().slice(0,1);
-	}(new Date());
-}
-
-Fluxcon.prototype.focusEditor = function()
-{
-	EditorView.el.focus();
-}
-
-Fluxcon.prototype.log = function out()
-{
-	var args 		= [].slice.call(arguments);
-	var timestamp 	= this.timestamp();
-	var el = ConsoleView.log(timestamp,args.length>1?args.join(" "):args[0]);
-		el.scrollIntoView();
-		
-	return el;
-};
-
-module.exports = Fluxcon;
-
-},{"../controller/ajax":4,"../controller/history":5,"../controller/storage":6,"../view/console":10,"../view/editor":11}],9:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function object_dump(prop)
 {
 	var seen = [];
@@ -426,6 +483,25 @@ var ConsoleView = new View({
 	
 			switch (typeof(data))
 			{
+				case "string":
+					//don't need to cast anything
+					break;
+				case "function":
+					data = data.toString();
+					break;
+				case "number":
+					dataspan.style.color = "darkorange";
+					dataspan.style.fontFamily = "Courier New";
+					break;
+				case "boolean":
+					dataspan.style.color = "purple";
+					dataspan.style.fontWeight = 'bold';
+					dataspan.style.fontFamily = "Courier New";
+					break;
+				case "undefined":
+					data = "'undefined'";
+					dataspan.style.color = "brown";
+					break;
 				case "object":
 					if (data.type==="error") //General error
 					{
@@ -441,20 +517,9 @@ var ConsoleView = new View({
 						data = data.message;
 						break;
 					}
-				case "function":
-					data = data.toString();
-					break;
-				case "number":
-					dataspan.style.color = "darkorange";
-					dataspan.style.fontFamily = "Courier New";
-				case "string":
-					break;
-				case "undefined":
-					data = "'undefined'";
-					dataspan.style.color = "brown";
 					break;
 				default:
-					this.log("Warning: Unhandled type cast to string: "+typeof(data))
+					this.log("Warning: Unhandled type cast to string: "+typeof(data));
 					data = data.toString();
 					break;
 			};
@@ -544,4 +609,4 @@ var EditorView = new View({
 
 module.exports = EditorView;
 
-},{"../class/view":2}]},{},[7])
+},{"../class/view":2}]},{},[5])

@@ -1,42 +1,48 @@
 Object.dump = require("./util/object").dump;
 
+/*IDEA: Hotkey controller [view -> controller/hotkey]
+ **/
+ 
 var Config 		= require("./config");
-var Fluxcon 	= require("./module/fluxcon");
+
+var FluxController = require("./controller/flux");
+
 var ViewClass	= require("./class/view");
 
-function setup()
+var FluxconModule = (function()
 {
-	ViewClass.domReady();
+	function ready(window)
+	{
+		ViewClass.domReady(window);
 
-	var flx = new Fluxcon(Config);
-
-	function printError(e){
-		flx.log(e);
+		if (!window.fluxconsole)
+			window.fluxconsole = new FluxController(Config);
+			
+		window.addEventListener('error',
+								window.fluxconsole.log);
+								
+		window.addEventListener('hashchange', 
+								window.fluxconsole.processHash);
+		
+		window.fluxconsole.processHash();
+		window.fluxconsole.focusEditor();
+		
+		return window.fluxconsole;
 	};
 	
-	window.addEventListener('error',printError);
-
-	function processHash() 
+	return function(window)
 	{
-	  const hash = location.hash.slice(1);
-	  if (hash)
-		{
-			try //to load as base64
-			{
-				flx.parseInput ( atob( hash ) );
-			}
-			catch (e)
-			{
-				flx.parseInput(hash)
-			}
-			
-			location.hash = "";
-		}
+		if (window && window.addEventListener)
+			window.addEventListener("load",function(){
+				ready(window);
+			});
+		else
+			throw new Error("Invalid window object. Running from Node?");
+		
+		return true;
 	}
+	
+}());
 
-	window.addEventListener('hashchange', processHash);
-	processHash();
-	flx.focusEditor();
-}
-
-window.addEventListener("load",setup);
+if (typeof(window)==='object' && FluxconModule(window))
+	console.log("Fluxcon loaded succesfully");

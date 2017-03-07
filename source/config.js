@@ -1,6 +1,8 @@
+//IDEA: Loaded controllers in config
+
 Config = {};
-Config.version = "0.2.4";
-Config.vername = "Happy Pizza";
+Config.version = "0.2.5";
+Config.vername = "Savage Spaghetti";
 Config.console = {};
-Config.console.init = "J0ZsdXhjb24gJytmbHV4Y29uZmlnLnZlcnNpb24rJyAoJytmbHV4Y29uZmlnLnZlcm5hbWUrJykgcnVubmluZy4n";
+Config.console.init = "J0ZsdXhjb24gJytmbHV4Y29uc29sZS5jb25maWcudmVyc2lvbisnICgnK2ZsdXhjb25zb2xlLmNvbmZpZy52ZXJuYW1lKycpIHJ1bm5pbmcuJw==";
 module.exports = Config;
