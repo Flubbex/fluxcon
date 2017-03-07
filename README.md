@@ -16,7 +16,11 @@ A javascript console.
 
 ## Changelist
 
-##0.2.5 (Savage Spaghetti)
+
+##0.2.6 
+* Slight css adjustment (messages now display in span/div sets)
+
+## 0.2.5 (Savage Spaghetti)
 * More code layout changing [move controllers tools,rmdir modules]
 * Modified emitter, renamed to fluxmitter
 * new fluxcon controller, acts as previous fluxcon module (but better)

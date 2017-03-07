@@ -57,7 +57,7 @@ var EditorView = new View({
 		tb_load:function()
 		{
 			var source = prompt("Paste your saucecode here.");
-			EditorView.emit("clearConsole");
+			EditorView.emit("clear");
 			EditorView.emit("input","this.history.load('"+source+"')");
 		},
 		tb_panic:function()

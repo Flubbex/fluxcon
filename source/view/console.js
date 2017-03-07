@@ -13,7 +13,7 @@ var ConsoleView = new View({
 		log:function(timestamp,data)
 		{
 			var newdiv 		= document.createElement("div");
-			var dataspan 	= document.createElement("span");
+			var dataspan 	= document.createElement("div");
 			var timespan 	= document.createElement("span");
 			timespan.innerHTML = timestamp;
 	

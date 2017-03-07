@@ -149,21 +149,17 @@ function FluxController(config)
 	this.history 	= new HistoryTool();
 	this.storage	= new StorageTool();
 	
-	//TODO: Stop being lazy
 	if (window)
-	{
 		window.fluxconsole = this;
-	}
 	
 	EditorView.on("input",this.parseInput,this);
-	
-	EditorView.on("clearConsole",this.clear,this);
+	EditorView.on("clear",this.clear,this);
 	
 	
 	//Load initial 'payload' (prints a pretty message about the console running)
 	//TODO: Check if init payload exists in storage, load that instead
 	var payload = this.parse("atob('"+config.console.init+"')");
-	console.log(payload)
+
 	var newdiv = this.parseLog(payload,true);
 	
 	//Make it prettier (all bubbles to green to indicate success)
@@ -188,8 +184,11 @@ FluxController.prototype.log = function out()
 {
 	var args 		= [].slice.call(arguments);
 	var timestamp 	= this.timestamp();
-	var el = ConsoleView.log(timestamp,args.length>1?args.join(" "):args[0]);
-		el.scrollIntoView();
+	
+	var el = ConsoleView.log(timestamp,args.length>1
+								?args.join(" ")
+								:args[0]);
+	el.scrollIntoView();
 		
 	return el;
 };
@@ -477,7 +476,7 @@ var ConsoleView = new View({
 		log:function(timestamp,data)
 		{
 			var newdiv 		= document.createElement("div");
-			var dataspan 	= document.createElement("span");
+			var dataspan 	= document.createElement("div");
 			var timespan 	= document.createElement("span");
 			timespan.innerHTML = timestamp;
 	
@@ -594,7 +593,7 @@ var EditorView = new View({
 		tb_load:function()
 		{
 			var source = prompt("Paste your saucecode here.");
-			EditorView.emit("clearConsole");
+			EditorView.emit("clear");
 			EditorView.emit("input","this.history.load('"+source+"')");
 		},
 		tb_panic:function()
