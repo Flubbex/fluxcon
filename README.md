@@ -1,7 +1,7 @@
-#Fluxcon
+# Fluxcon
 A javascript console.
 
-##Current Features
+## Current Features
 * Takes code. Runs it. 
 
 ## Next major version
@@ -16,8 +16,7 @@ A javascript console.
 
 ## Changelist
 
-
-##0.2.6 
+## 0.2.6 
 * Slight css adjustment (messages now display in span/div sets)
 
 ## 0.2.5 (Savage Spaghetti)
