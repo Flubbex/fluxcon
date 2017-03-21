@@ -1,10 +1,11 @@
-#Fluxcon
+# Fluxcon
 A javascript console.
 
-##Current Features
+## Current Features
 * Takes code. Runs it.
 
 ## Next major version
+
 ## 0.3.0 (???)
 * Saving and loading now based on storage module
 * Console code run from storage module
@@ -22,7 +23,6 @@ A javascript console.
 * Restructuring for fluxmitter/fluxview capabilities.
 * Dramatic HTML/CSS modifications to adapt Skeleton framework.
 * Console log styling revamped to use CSS styling.
-* Cleaned code (+30 warns) with lint
 
 ## 0.2.6
 * CSS adjusted (messages now display in span/div sets)
