@@ -1,11 +1,8 @@
-var Emitter = require("./emitter");
+var fluxmitter = require("./fluxmitter");
 
-var Model = function(attributes)
+function Model(root)
 {
-	for (var attr in attributes)
-		this[attr] = attributes[attr];
-}
-
-Model.prototype = new Emitter();
+    return Object.create(root,Model);
+};
 
 module.exports = Model;

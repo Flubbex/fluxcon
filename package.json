@@ -23,12 +23,15 @@
   },
   "homepage": "https://github.com/Flubbex/fluxcon#readme",
   "devDependencies": {
-    "emitonoff": "^0.1.1",
     "gulp": "^3.9.1",
     "gulp-browserify": "^0.5.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-mocha": "^4.1.0",
     "gulp-open": "^2.0.0",
     "gulp-uglify": "^2.0.1",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
     "mocha": "^3.2.0",
-    "require-all": "^2.2.0"
+    "node-inspector": "^0.12.10"
   }
 }

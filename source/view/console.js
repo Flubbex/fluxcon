@@ -1,71 +1,42 @@
-var View = require("../class/view");
+var View = require("../class/fluxview");
 
 var ConsoleView = new View({
-		el:"console",
-		initialize:function()
-		{
-		},
-		clear:function(placeholder)
-		{
-			this.el.innerHTML = "";
-			return placeholder || "console cleared.";
-		},
-		log:function(timestamp,data)
-		{
-			var newdiv 		= document.createElement("div");
-			var dataspan 	= document.createElement("div");
-			var timespan 	= document.createElement("span");
-			timespan.innerHTML = timestamp;
-	
-			switch (typeof(data))
-			{
-				case "string":
-					//don't need to cast anything
-					break;
-				case "function":
-					data = data.toString();
-					break;
-				case "number":
-					dataspan.style.color = "darkorange";
-					dataspan.style.fontFamily = "Courier New";
-					break;
-				case "boolean":
-					dataspan.style.color = "purple";
-					dataspan.style.fontWeight = 'bold';
-					dataspan.style.fontFamily = "Courier New";
-					break;
-				case "undefined":
-					data = "'undefined'";
-					dataspan.style.color = "brown";
-					break;
-				case "object":
-					if (data.type==="error") //General error
-					{
-						dataspan.style.color = "red";
-						var prettyfilename = data.filename.slice(data.filename.lastIndexOf("/")+1);
-											
-						data = data.message + 
-							" ["+prettyfilename+":"+data.lineno+":"+data.colno+"]";
-					}
-					else if(data.stack)
-					{
-						dataspan.style.color = "red";
-						data = data.message;
-						break;
-					}
-					break;
-				default:
-					this.log("Warning: Unhandled type cast to string: "+typeof(data));
-					data = data.toString();
-					break;
-			};
+        el:"console",
+        initialize:function()
+        {
+        },
+        clear:function(placeholder)
+        {
+            this.el.innerHTML = "";
+            return placeholder || "console cleared.";
+        },
+        log_error:function(timestamp,data)
+        {
+            var out = this.log(timestamp,data);
+                out.className += "log_error";
+            return out;
+        },
+        log:function(timestamp,data)
+        {
+            var newdiv      = document.createElement("div");
+            var dataspan    = document.createElement("div");
+            var timespan    = document.createElement("div");
 
-			dataspan.innerHTML = data;
-			newdiv.appendChild(timespan);
-			newdiv.appendChild(dataspan);
-			this.el.appendChild(newdiv);
-			return newdiv;
-		}
+            newdiv.className    = "row";
+            dataspan.className  = "ten columns";
+            timespan.className  = "two columns";
+
+            timespan.innerHTML  = timestamp;
+            dataspan.innerHTML  = data.toString();
+
+            dataspan.className += " log_"+typeof(data);
+
+            newdiv.appendChild(timespan);
+            newdiv.appendChild(dataspan);
+            this.el.appendChild(newdiv);
+
+            return newdiv;
+        }
 })
 
 module.exports = ConsoleView;

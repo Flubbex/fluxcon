@@ -2,7 +2,7 @@
 A javascript console.
 
 ##Current Features
-* Takes code. Runs it. 
+* Takes code. Runs it.
 
 ## Next major version
 ## 0.3.0 (???)
@@ -16,9 +16,16 @@ A javascript console.
 
 ## Changelist
 
+## 0.2.7 (Rainbow Lipstick)
+* Moved from custom codebase to own html5base
+* Updated fluxmitter, updated view (now fluxview)
+* Restructuring for fluxmitter/fluxview capabilities.
+* Dramatic HTML/CSS modifications to adapt Skeleton framework.
+* Console log styling revamped to use CSS styling.
+* Cleaned code (+30 warns) with lint
 
-##0.2.6 
-* Slight css adjustment (messages now display in span/div sets)
+## 0.2.6
+* CSS adjusted (messages now display in span/div sets)
 
 ## 0.2.5 (Savage Spaghetti)
 * More code layout changing [move controllers tools,rmdir modules]
@@ -54,7 +61,7 @@ A javascript console.
 * Modest UI overhaul
 * Code is now properly organized and MVC-compliant.
 * All beta-functions removed (Or at least, unsupported for now)
-* Basic console functionality works (write things, run them) 
+* Basic console functionality works (write things, run them)
 
 ## 0.1.0 - 0.1.7
-* Initial testing versions. 
+* Initial testing versions.

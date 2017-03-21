@@ -1,35 +1,65 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Fluxcon</title>
-  <meta name="description" content="JSConsole">
-  <meta name="author" content="Flubbex">
-  <link rel="stylesheet" href="css/index.css">
-  <script type="text/javascript" src="js/index.js"></script>
-</head>
 
+    <!-- Basic Page Needs
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta charset="utf-8">
+    <title>Fluxconsole</title>
+    <meta name="description" content="Fluxcon">
+    <meta name="author" content="Flubbex">
+
+    <!-- Mobile Specific Metas
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Fonts
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link href="css/font_raleway.css" rel="stylesheet" type="text/css">
+
+    <!-- Skeleton CSS
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+
+    <!-- Custom CSS
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="stylesheet" href="css/index.css">
+
+    <!-- Favicon
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <!-- JavaScript
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <script type="text/javascript" src="js/index.js">   </script>
+
+</head>
 <body>
-	<div id="console">
-	
-	</div>
-	
-	<div id="editor">
-		<textarea id="text"></textarea>
-		<div id="toolbox">
-			<input id="tb_run"	type="button" value="Run">	</input>
-			<input id="tb_save"	type="button" value="Save">	</input>
-			<input id="tb_load"	type="button" value="Load">	</input>
-			<input id="tb_pan"	type="button" value="Panic"></input>
-			<input id="tb_flux" type="button" value="Flux">	</input>
-		</div>
-	</div>
-	
-	<div id="footer">
-		<span>
-			<a href="https://github.com/Flubbex/jsconsole">Made by Flubbex © 2017</a>
-		</span>
-	</div>
+
+    <!-- Primary Page Layout
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <div class="container" id="console"></div>
+
+    <div id="editor" class="container">
+        <textarea class="container" id="text"></textarea>
+    </div>
+
+    <div class="container" id="toolbox">
+        <input id="tb_run"  type="button" value="Run">  </input>
+        <input id="tb_save" type="button" value="Save"> </input>
+        <input id="tb_load" type="button" value="Load"> </input>
+        <input id="tb_pan"  type="button" value="Panic"></input>
+        <input id="tb_flux" type="button" value="Flux"> </input>
+    </div>
+
+    <div class="container" id="footer">
+        <div class="row">
+            <a href="https://github.com/Flubbex/jsconsole">Made by Flubbex © 2017</a>
+        </div>
+    </div>
+
+    <!-- End Document
+    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>

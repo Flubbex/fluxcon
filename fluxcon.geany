@@ -27,12 +27,15 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=874;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Findex.js;0;4
-FILE_NAME_1=76;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Ftest%2Findex.js;0;4
-FILE_NAME_2=130;JSON;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fpackage.json;0;4
-FILE_NAME_3=0;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fgulpfile.js;0;4
-FILE_NAME_4=933;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fmodule%2Ffluxcon.js;0;4
+current_page=2
+FILE_NAME_0=695;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Ftool%2Fhistory.js;0;4
+FILE_NAME_1=1426;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fview%2Feditor.js;0;4
+FILE_NAME_2=1388;CSS;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fdocs%2Fcss%2Findex.css;0;4
+FILE_NAME_3=357;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fview%2Fconsole.js;0;4
+FILE_NAME_4=75;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fconfig.js;0;4
+FILE_NAME_5=29;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fclass%2Fview.js;0;4
+FILE_NAME_6=745;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Fcontroller%2Fflux.js;0;4
+FILE_NAME_7=406;Javascript;0;EUTF-8;1;1;0;%2Fhome%2Fmichael%2FProjects%2Ffluxcon%2Fsource%2Findex.js;0;4
 
 [VTE]
 last_dir=/media/michael/data/Projects/fluxcon
